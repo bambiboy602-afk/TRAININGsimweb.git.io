@@ -1,0 +1,8 @@
+{
+  "name": "Peer Support & Behavioral Health Training Simulator",
+  "description": "A high-fidelity clinical training tool for peer support specialists and behavioral health professionals featuring 8 AI-driven personas and real-time clinical evaluation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
