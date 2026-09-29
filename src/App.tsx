@@ -3,10 +3,11 @@ import { Sidebar } from './components/Sidebar';
 import { ChatArea } from './components/ChatArea';
 import { EvalSidebar } from './components/EvalSidebar';
 import { VoiceControls } from './components/VoiceControls';
+import { PersonaGrid } from './components/PersonaGrid';
 import { Persona, Message, Scores, EvalResponse } from './types';
 import { initAuth, googleSignIn, logout } from './lib/auth';
 import { exportToDocs, logToSheets } from './lib/workspace';
-import { LogOut, FileText, Table, User as UserIcon } from 'lucide-react';
+import { LogOut, FileText, Table, User as UserIcon, LayoutGrid, ChevronLeft } from 'lucide-react';
 import { User } from 'firebase/auth';
 
 export default function App() {
@@ -204,6 +205,12 @@ export default function App() {
             </div>
           </div>
           <button 
+            onClick={() => setActivePersona(null)}
+            className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold text-sky-400 hover:text-white hover:bg-sky-500/10 rounded-lg transition-colors border border-sky-500/20 mb-2"
+          >
+            <LayoutGrid size={14} /> Browse Cases
+          </button>
+          <button 
             disabled={!activePersona}
             onClick={handleExportDoc}
             className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-30"
@@ -220,23 +227,38 @@ export default function App() {
         </div>
       </div>
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="bg-slate-900 border-b border-slate-800 p-3 flex justify-between items-center">
-          <VoiceControls 
-            onTranscribe={(text) => handleSendMessage(text)}
-            lastPersonaResponse={messages.length > 0 && messages[messages.length-1].role === 'assistant' ? messages[messages.length-1].content : undefined}
-            isLiveMode={isLiveMode}
-            onToggleLive={() => setIsLiveMode(!isLiveMode)}
-          />
-          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            Training Session Active
-          </div>
-        </div>
-        <ChatArea 
-          activePersona={activePersona} 
-          messages={messages} 
-          onSendMessage={handleSendMessage}
-          isLoading={isLoading}
-        />
+        {activePersona ? (
+          <>
+            <div className="bg-slate-900 border-b border-slate-800 p-3 flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => setActivePersona(null)}
+                  className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                  title="Return to Case Selection"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <VoiceControls 
+                  onTranscribe={(text) => handleSendMessage(text)}
+                  lastPersonaResponse={messages.length > 0 && messages[messages.length-1].role === 'assistant' ? messages[messages.length-1].content : undefined}
+                  isLiveMode={isLiveMode}
+                  onToggleLive={() => setIsLiveMode(!isLiveMode)}
+                />
+              </div>
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                Training Session Active
+              </div>
+            </div>
+            <ChatArea 
+              activePersona={activePersona} 
+              messages={messages} 
+              onSendMessage={handleSendMessage}
+              isLoading={isLoading}
+            />
+          </>
+        ) : (
+          <PersonaGrid onSelect={handleSelectPersona} />
+        )}
       </div>
       <EvalSidebar scores={scores} persona={activePersona} feedback={feedback} />
     </div>
